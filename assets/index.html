@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>크립토 시가총액 상위 10</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <div class="header">
+        <div>
+          <h1>시가총액 상위 10</h1>
+          <p class="subtitle">CoinGecko 데이터 · 30초마다 자동 갱신</p>
+        </div>
+        <div class="toolbar">
+          <label for="currency-select">통화</label>
+          <select id="currency-select" aria-label="통화 선택">
+            <option value="USD">USD</option>
+            <option value="KRW">KRW</option>
+          </select>
+        </div>
+      </div>
+      <div id="status" class="status">로딩 중…</div>
+      <div id="updated" class="updated"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>코인</th>
+              <th>가격 (USD)</th>
+              <th>시가총액 (USD)</th>
+              <th>24h</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+  </html>

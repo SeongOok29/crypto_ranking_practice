@@ -1,13 +1,18 @@
 import express from 'express';
+import next from 'next';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const dev = process.env.NODE_ENV !== 'production';
+const nextApp = next({ dev, dir: 'web' });
+const handle = nextApp.getRequestHandler();
 
 // Simple in-memory cache (per currency)
 const CACHE_MS = parseInt(process.env.CACHE_MS || '60000', 10);
 const caches = new Map(); // key: vs ('usd'|'krw') -> { ts, data }
 const ALLOWED = new Set(['usd', 'krw']);
 
+// Static legacy assets (optional). Next.js will serve the UI.
 app.use(express.static('assets'));
 
 app.get('/api/markets', async (req, res) => {
@@ -63,10 +68,11 @@ app.get('/api/markets', async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(process.cwd() + '/assets/index.html');
-});
+// Prepare Next.js and set up catch-all to Next handler
+await nextApp.prepare();
+
+app.all('*', (req, res) => handle(req, res));
 
 app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server listening on http://127.0.0.1:${PORT}`);
+  console.log(`Server (Next ${dev ? 'dev' : 'prod'}) listening on http://127.0.0.1:${PORT}`);
 });

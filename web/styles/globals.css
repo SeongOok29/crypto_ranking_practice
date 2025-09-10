@@ -1,8 +1,8 @@
 :root{
-  --bg:#0f1218;--card:#161b22;--text:#e6edf3;--muted:#9aa4b2;--up:#2ecc71;--down:#e74c3c;--border:#2a3240;--accent:#5aa2ff
+  --bg:#0f1218;--card:#161b22;--text:#e6edf3;--muted:#9aa4b2;--up:#2ecc71;--down:#e74c3c;--border:#2a3240
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
 .container{max-width:960px;margin:40px auto;padding:0 16px}
 h1{margin:0 0 6px 0;font-size:24px}
 .subtitle{margin:0 0 16px 0;color:var(--muted)}

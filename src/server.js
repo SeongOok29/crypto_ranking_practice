@@ -1,26 +1,27 @@
 import express from 'express';
 import next from 'next';
 
-const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({ dev, dir: 'web' });
-const handle = nextApp.getRequestHandler();
 
-// Simple in-memory cache (per currency)
+// Simple in-memory cache
 const CACHE_MS = parseInt(process.env.CACHE_MS || '60000', 10);
 const caches = new Map(); // key: vs ('usd'|'krw') -> { ts, data }
 const ALLOWED = new Set(['usd', 'krw']);
 
-// Static legacy assets (optional). Next.js will serve the UI.
-app.use(express.static('assets'));
+const app = express();
+const nextApp = next({ dev, dir: 'web' });
+const handle = nextApp.getRequestHandler();
 
+// API endpoint served by Express
 app.get('/api/markets', async (req, res) => {
   try {
     const vs = String((req.query.vs || 'usd')).toLowerCase();
     if (!ALLOWED.has(vs)) {
       return res.status(400).json({ error: `Invalid currency: ${vs}. Use one of: usd, krw` });
     }
+
     const now = Date.now();
     const entry = caches.get(vs);
     if (entry && entry.data && now - entry.ts < CACHE_MS) {
@@ -31,7 +32,7 @@ app.get('/api/markets', async (req, res) => {
     const params = new URLSearchParams({
       vs_currency: vs,
       order: 'market_cap_desc',
-      per_page: '10',
+      per_page: '30',
       page: '1',
       price_change_percentage: '24h'
     });
@@ -68,11 +69,11 @@ app.get('/api/markets', async (req, res) => {
   }
 });
 
-// Prepare Next.js and set up catch-all to Next handler
+// Prepare Next.js then delegate everything else
 await nextApp.prepare();
-
 app.all('*', (req, res) => handle(req, res));
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server (Next ${dev ? 'dev' : 'prod'}) listening on http://127.0.0.1:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server listening on http://${HOST}:${PORT}`);
 });
+

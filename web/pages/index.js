@@ -16,16 +16,14 @@ function useFormatters(vs) {
 }
 
 export default function Home() {
-  const [vs, setVs] = useState(() => typeof window !== 'undefined' ? (localStorage.getItem('vs') || 'USD') : 'USD');
+  const [vs, setVs] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('vs') || 'USD' : 'USD'));
   const [status, setStatus] = useState('로딩 중…');
   const [updated, setUpdated] = useState('');
   const [items, setItems] = useState([]);
   const fmt = useFormatters(vs);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('vs', vs);
-    }
+    if (typeof window !== 'undefined') localStorage.setItem('vs', vs);
   }, [vs]);
 
   async function load(manual = false) {
@@ -44,9 +42,7 @@ export default function Home() {
     } catch (e) {
       console.error(e);
       setStatus(`데이터 로드 실패: ${e.message || e}`);
-      if (!items.length) {
-        setItems([{ __error: true }]);
-      }
+      if (!items.length) setItems([{ __error: true }]);
     }
   }
 
@@ -61,17 +57,12 @@ export default function Home() {
     <main className="container">
       <div className="header">
         <div>
-          <h1>시가총액 상위 10</h1>
+          <h1>시가총액 상위 30</h1>
           <p className="subtitle">CoinGecko 데이터 · 30초마다 자동 갱신</p>
         </div>
         <div className="toolbar">
           <label htmlFor="currency-select">통화</label>
-          <select
-            id="currency-select"
-            aria-label="통화 선택"
-            value={vs}
-            onChange={(e) => setVs(e.target.value)}
-          >
+          <select id="currency-select" aria-label="통화 선택" value={vs} onChange={(e) => setVs(e.target.value)}>
             <option value="USD">USD</option>
             <option value="KRW">KRW</option>
           </select>
@@ -95,11 +86,7 @@ export default function Home() {
               <tr><td colSpan={5}>로딩 중…</td></tr>
             )}
             {items.map((it) => {
-              if (it.__error) {
-                return (
-                  <tr key="err"><td colSpan={5}>데이터를 불러올 수 없습니다. 네트워크 상태 또는 API 제한을 확인하고 잠시 후 다시 시도하세요.</td></tr>
-                );
-              }
+              if (it.__error) return (<tr key="err"><td colSpan={5}>데이터를 불러올 수 없습니다.</td></tr>);
               const change = it.change_24h ?? 0;
               const cls = change >= 0 ? 'up' : 'down';
               const sign = change >= 0 ? '+' : '';
